@@ -1,6 +1,5 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {
-  Animated,
   Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -17,9 +16,8 @@ import MyWorkPage from './components/my-work-page-component/my-work-page-compone
 const {height} = Dimensions.get('screen');
 
 const App = () => {
-  let scrollOffsetY = useRef(new Animated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView | null>(null);
-  const [activeButton, setactiveButton] = useState('home');
+  const menuRef = useRef<any>(null);
 
   const setScroll = (section: string) => {
     if (scrollViewRef.current) {
@@ -50,21 +48,17 @@ const App = () => {
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollOffset = event.nativeEvent.contentOffset.y;
     if (scrollOffset < 700) {
-      setactiveButton('home');
-    }
-    if (scrollOffset < 1550) {
-      setactiveButton('about');
+      menuRef.current.setActiveButtonOnScroll('home');
+    } else if (scrollOffset < 1550) {
+      menuRef.current.setActiveButtonOnScroll('about');
     } else {
-      setactiveButton('work');
+      menuRef.current.setActiveButtonOnScroll('work');
     }
   };
 
   return (
     <SafeAreaProvider style={{flex: 1, overflow: 'hidden'}}>
-      <Menu
-        animHeaderValue={scrollOffsetY}
-        onMenuButtonPress={setScroll}
-        activeButtonName={activeButton}></Menu>
+      <Menu onMenuButtonPress={setScroll} ref={menuRef}></Menu>
       <SafeAreaView style={styles.container}>
         <ScrollView
           scrollEventThrottle={16}

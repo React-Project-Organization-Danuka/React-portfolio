@@ -1,19 +1,18 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import cofee from '../../assets/icons/cup-hot.svg';
 import rocket from '../../assets/icons/rocket.svg';
 import project_1 from '../../assets/images/project_1.png';
 import project_2 from '../../assets/images/project_2.png';
 import project_3 from '../../assets/images/project_3.png';
-import CarouselCardItem from '../carousel-card-component/carousel-card-component';
 import DynamicBackground from '../dynamic-background-component/dynamic-background-component';
 // import rightArrow from '../../assets/icons/right_arrow.svg';
 
@@ -29,18 +28,15 @@ export const IMAGE_WIDTH_INACTIVE = 150;
 
 const componentData = [
   {
-    component: CarouselCardItem,
     props: {
       img: project_1,
       text: 'API for GetSafe School/Office Transport Management System',
     },
   },
   {
-    component: CarouselCardItem,
     props: {img: project_2, text: 'Web Application for Smart Plug'},
   },
   {
-    component: CarouselCardItem,
     props: {
       img: project_3,
       text: 'GPA calculator and predictor web application',
