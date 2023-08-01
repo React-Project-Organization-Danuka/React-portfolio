@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 import LinkButton from '../link-button-component/link-button-component';
 import MenuButton from '../menu-button-component/menu-button-component';
 
 interface MenuProps {
-  animHeaderValue: any;
   onMenuButtonPress: (data: string) => void;
-  activeButtonName: string;
+}
+
+interface MenuRef {
+  setActiveButtonOnScroll: (activeSection:string) => void;
 }
 
 const styles = StyleSheet.create({
@@ -21,7 +23,7 @@ const styles = StyleSheet.create({
   containerRight: {
     display: 'flex',
     justifyContent: 'flex-end',
-    marginTop: 20,
+    marginTop: 0,
     marginRight: 140,
     flexDirection: 'row',
   },
@@ -30,33 +32,27 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginLeft: 150,
     flexDirection: 'row',
-    marginTop: 50,
+    marginTop: 25,
   },
 });
 
-const Menu: React.FC<MenuProps> = ({
-  animHeaderValue,
-  onMenuButtonPress,
-  // activeButtonName,
-}) => {
+// const Menu: React.FC<MenuProps> = ({onMenuButtonPress,}) => {
+const Menu = forwardRef<MenuRef, MenuProps>(({onMenuButtonPress}, ref) => {
+  useImperativeHandle(ref, () => ({
+    setActiveButtonOnScroll(activeSection) {
+      setactiveButton(activeSection)
+    },
+  }));
+
   const [activeButton, setactiveButton] = useState('home');
-  // setactiveButton(activeButtonName);
 
   const handleButtonPress = (section: string) => {
-    setactiveButton(section);
     onMenuButtonPress(section);
   };
 
-  if (animHeaderValue > 0 && animHeaderValue < 700) {
-    setactiveButton('home');
-  }
-
   return (
     <Animated.View
-      style={[
-        styles.mainContainer,
-        {borderWidth: 1, height: 100},
-      ]}>
+      style={[styles.mainContainer, {borderWidth: 1, height: 70}]}>
       <View style={[styles.containerLeft]}>
         <LinkButton icon="insta" link="https://www.instagram.com/"></LinkButton>
         <LinkButton
@@ -90,6 +86,6 @@ const Menu: React.FC<MenuProps> = ({
       </View>
     </Animated.View>
   );
-};
+});
 
 export default Menu;
