@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   containerRight: {
     display: 'flex',
     justifyContent: 'flex-end',
-    marginTop: 20,
+    marginTop: 0,
     marginRight: 140,
     flexDirection: 'row',
   },
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginLeft: 150,
     flexDirection: 'row',
-    marginTop: 50,
+    marginTop: 25,
   },
 });
 
@@ -52,7 +52,7 @@ const Menu = forwardRef<MenuRef, MenuProps>(({onMenuButtonPress}, ref) => {
 
   return (
     <Animated.View
-      style={[styles.mainContainer, {borderWidth: 1, height: 100}]}>
+      style={[styles.mainContainer, {borderWidth: 1, height: 70}]}>
       <View style={[styles.containerLeft]}>
         <LinkButton icon="insta" link="https://www.instagram.com/"></LinkButton>
         <LinkButton
