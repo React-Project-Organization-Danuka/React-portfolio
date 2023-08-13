@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+//@ts-nocheck
+import React, {useContext, useState} from 'react';
 import {
-    Animated,
-    Dimensions,
-    Image,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import cofee from '../../assets/icons/cup-hot.svg';
 import rocket from '../../assets/icons/rocket.svg';
+import rightarrow from '../../assets/icons/right_arrow.svg';
 import project_1 from '../../assets/images/project_1.png';
 import project_2 from '../../assets/images/project_2.png';
 import project_3 from '../../assets/images/project_3.png';
 import DynamicBackground from '../dynamic-background-component/dynamic-background-component';
-// import rightArrow from '../../assets/icons/right_arrow.svg';
+import {ThemeContext} from '../theme-manager-component/theme-provider-component';
+import descriptions from '../../assets/descriptions.json'
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH_INACTIVE = 300;
@@ -31,43 +34,52 @@ const componentData = [
     props: {
       img: project_1,
       text: 'API for GetSafe School/Office Transport Management System',
+      description:descriptions[0]['my-work']['get_safe'],
     },
   },
   {
-    props: {img: project_2, text: 'Web Application for Smart Plug'},
+    props: {
+      img: project_2,
+      text: 'Web Application for Displaying Analytics of a Smart Plug',
+      description:descriptions[0]['my-work']['smart_plug'],
+    },
   },
   {
     props: {
       img: project_3,
       text: 'GPA calculator and predictor web application',
+      description:descriptions[0]['my-work']['gpa_predictor'],
     },
   },
 ];
 
 const MyWorkPage: React.FC = () => {
+  const {primaryColor, secondaryColor} = useContext(ThemeContext);
+
   const styles = StyleSheet.create({
     mainContainer: {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
-      backgroundColor: 'white',
+      backgroundColor: primaryColor,
       alignItems: 'center',
       width: '80%',
     },
     header: {
-      color: '#222',
       fontSize: 20,
       fontWeight: 'bold',
       paddingLeft: 20,
       paddingTop: 20,
-      alignSelf: 'center',
+      textAlign: 'center',
+      color: secondaryColor,
     },
     body: {
-      color: '#222',
       fontSize: 18,
-      paddingLeft: 20,
-      paddingRight: 20,
+      textAlign: 'center',
+      color: secondaryColor,
+      marginTop: 20,
     },
+    
   });
 
   const [myArray, setMyArray] = useState(componentData);
@@ -102,8 +114,8 @@ const MyWorkPage: React.FC = () => {
   const moveForward = () => {
     Animated.timing(mainAnimation, {
       toValue: 1,
-      duration: 500,
-      useNativeDriver: false,
+      duration: 300,
+      useNativeDriver: true,
     }).start(() => {
       setMyArray(prevArray => {
         // Create a new array with the elements moved forward by one position
@@ -230,8 +242,31 @@ const MyWorkPage: React.FC = () => {
     );
   });
 
+  const animatedValue = new Animated.Value(0);
+  const [value, setValue] = useState(0);
+
+  const handleMouseEnterInternal = (index: number) => {
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleMouseLeaveInternal = (index: number) => {
+    Animated.timing(animatedValue, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  animatedValue.addListener(animation => {
+    setValue(animation.value * ITEM_WIDTH);
+  });
+
   return (
-    <View style={{height: '60%'}}>
+    <View style={{height: '60%', backgroundColor: 'transparent'}}>
       <DynamicBackground offset={0} icons={[rocket, cofee]} rows={8} />
       <View
         style={{
@@ -239,6 +274,7 @@ const MyWorkPage: React.FC = () => {
           justifyContent: 'center',
           alignItems: 'center',
           height: '60%',
+          backgroundColor: 'transparent',
         }}>
         <View style={{height: '30%'}}>
           <Text
@@ -248,82 +284,125 @@ const MyWorkPage: React.FC = () => {
               // lineHeight: 50,
               fontFamily: 'Noto Sans',
               textAlign: 'center',
+              color: secondaryColor,
             }}>
             My Work
           </Text>
         </View>
         <View style={styles.mainContainer}>
           <Pressable onPress={moveForward}>
-            <Text style={{fontSize: 30, paddingRight: 10, fontWeight: '900'}}>
-              {'<'}
-            </Text>
+            <Image
+              source={rightarrow}
+              style={{
+                width: 20,
+                height: 20,
+                transform: [{rotate: '180deg'}],
+                marginRight: 20,
+                tintColor: secondaryColor,
+              }}></Image>
           </Pressable>
           {myArray.slice(0, 3).map((item, index) => {
             const props = item.props;
             return (
-              <Animated.View
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: 20,
-                  paddingBottom: 40,
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 3,
-                  },
-                  shadowOpacity: 0.29,
-                  shadowRadius: 4.65,
-                  elevation: 7,
-                  marginLeft: index == 2 ? 50 : 0,
-                  marginRight: index == 0 ? 50 : 0,
+              <Pressable
+                style={{flex: 1, flexDirection: 'row'}}
+                {...(index == 1
+                  ? {
+                      onHoverIn: handleMouseEnterInternal,
+                      onHoverOut: handleMouseLeaveInternal,
+                    }
+                  : {})}>
+                <Animated.View
+                  style={{
+                    backgroundColor: primaryColor,
+                    borderRadius: 15,
+                    paddingBottom: 40,
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 3,
+                    },
+                    shadowOpacity: 0.29,
+                    shadowRadius: 4.65,
+                    marginLeft: index == 2 ? 50 : 0,
+                    marginRight: index == 0 ? 50 : 0,
 
-                  left: index == 1 || index == 0 ? animatedLeftMargin : 0,
-                  width:
-                    index == 1
-                      ? widthActiveValue
-                      : index == 0
-                      ? widthInActiveValue
-                      : ITEM_WIDTH_INACTIVE,
-                  height:
-                    index == 1
-                      ? hightActiveValue
-                      : index == 0
-                      ? hightInActiveValue
-                      : ITEM_WIDTH_INACTIVE,
-                  borderWidth: index == 1 ? 3 : 1,
-                  opacity:
-                    index == 0
-                      ? opacityIndex1Value
-                      : index == 1
-                      ? opacityIndex2Value
-                      : opacityIndex3Value,
-                }}>
-                <View key={index}>
-                  <Image
-                    source={props.img}
-                    style={{
-                      width:
-                        index == 1
-                          ? imageHightActiveValue
-                          : imageHightInActiveValue,
-                      height:
-                        index == 1
-                          ? imageWidthActiveValue
-                          : imageWidthInActiveValue,
-                      alignSelf: 'center',
-                      marginTop: 30,
-                    }}
-                  />
-                  <Text style={styles.header}>{props.text}</Text>
-                  <Text style={styles.body}></Text>
-                </View>
-              </Animated.View>
+                    left: index == 1 || index == 0 ? animatedLeftMargin : 0,
+                    width:
+                      index == 1
+                        ? widthActiveValue
+                        : index == 0
+                        ? widthInActiveValue
+                        : ITEM_WIDTH_INACTIVE,
+                    height:
+                      index == 1
+                        ? hightActiveValue
+                        : index == 0
+                        ? hightInActiveValue
+                        : ITEM_WIDTH_INACTIVE,
+                    borderWidth: index == 1 ? 3 : 1,
+                    opacity:
+                      index == 0
+                        ? opacityIndex1Value
+                        : index == 1
+                        ? opacityIndex2Value
+                        : opacityIndex3Value,
+                    borderColor: secondaryColor,
+                  }}>
+                  <View key={index}>
+                    {index == 1 && (
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: secondaryColor,
+                          borderRadius: 14,
+                          paddingBottom: 40,
+                          shadowColor: '#000',
+                          width: value,
+                          height: ITEM_HEIGHT,
+                          zIndex: 1000000000,
+                          position: 'absolute',
+                        }}>
+                        {value > 100 && (
+                          <Text style={{color: primaryColor, padding: 40}}>
+                            {props.description}
+                          </Text>
+                        )}
+                      </View>
+                    )}
+                    <Image
+                      source={props.img}
+                      style={{
+                        width:
+                          index == 1
+                            ? imageHightActiveValue
+                            : imageHightInActiveValue,
+                        height:
+                          index == 1
+                            ? imageWidthActiveValue
+                            : imageWidthInActiveValue,
+                        alignSelf: 'center',
+                        marginTop: 30,
+                      }}
+                    />
+                    <Text style={styles.header}>{props.text}</Text>
+                    {index == 1 && (
+                      <Text style={styles.body}>(Hover for more info)</Text>
+                    )}
+                  </View>
+                </Animated.View>
+              </Pressable>
             );
           })}
           <Pressable onPress={moveForward}>
-            <Text style={{fontSize: 30, paddingLeft: 10, fontWeight: '900'}}>
-              {'>'}
-            </Text>
+            <Image
+              source={rightarrow}
+              style={{
+                width: 20,
+                height: 20,
+                marginRight: 20,
+                tintColor: secondaryColor,
+              }}></Image>
           </Pressable>
         </View>
       </View>

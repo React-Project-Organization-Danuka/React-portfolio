@@ -1,21 +1,25 @@
-import React, {useState} from 'react';
-import {Image, Linking, Pressable, StyleSheet, Animated} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {Animated, Image, Linking, Pressable, StyleSheet} from 'react-native';
 import github_icon from '../../assets/icons/github.svg';
 import instagram_icon from '../../assets/icons/instagram.svg';
 import linkedin_icon from '../../assets/icons/linkedin.svg';
+import cv_icon from '../../assets/icons/cv.svg';
+import {ThemeContext} from '../theme-manager-component/theme-provider-component';
 
 interface LinkButtonProps {
   icon: string;
   link: string;
+  isPhoneMenu?: boolean;
 }
 
-const LinkButton: React.FC<LinkButtonProps> = ({icon, link}) => {
-  const [value, setValue] = useState(20);
-  const animatedValue = new Animated.Value(20);
+const LinkButton: React.FC<LinkButtonProps> = ({icon, link, isPhoneMenu}) => {
+  const [value, setValue] = useState(isPhoneMenu ? 15 : 20);
+  const animatedValue = new Animated.Value(isPhoneMenu ? 15 : 20);
+  const {primaryColor, secondaryColor} = useContext(ThemeContext);
 
   const handleMouseEnterInternal = () => {
     Animated.timing(animatedValue, {
-      toValue: 25,
+      toValue: isPhoneMenu ? 20 : 25,
       duration: 100,
       useNativeDriver: false, // Set to true for better performance on native platforms
     }).start();
@@ -23,7 +27,7 @@ const LinkButton: React.FC<LinkButtonProps> = ({icon, link}) => {
 
   const handleMouseLeaveInternal = () => {
     Animated.timing(animatedValue, {
-      toValue: 20,
+      toValue: isPhoneMenu ? 15 : 20,
       duration: 100,
       useNativeDriver: false, // Set to true for better performance on native platforms
     }).start();
@@ -35,16 +39,18 @@ const LinkButton: React.FC<LinkButtonProps> = ({icon, link}) => {
 
   const styles = StyleSheet.create({
     button: {
-      marginLeft: 50,
+      marginLeft: isPhoneMenu ? 0 : 30,
+      width: 25,
     },
     text: {
       justify: 'center',
-      fontSize: 16, // Center the text horizontally
+      fontSize: isPhoneMenu ? 12 : 16, // Center the text horizontally
       textAlign: 'center',
     },
     icon: {
       width: value,
       height: value,
+      tintColor: isPhoneMenu ? primaryColor : secondaryColor,
     },
   });
 
@@ -55,6 +61,8 @@ const LinkButton: React.FC<LinkButtonProps> = ({icon, link}) => {
     image = github_icon;
   } else if (icon == 'linkedin') {
     image = linkedin_icon;
+  } else if (icon == 'cv') {
+    image = cv_icon;
   } else {
     image = instagram_icon;
   }

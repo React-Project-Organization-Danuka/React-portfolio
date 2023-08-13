@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+//@ts-nocheck
+import React, { useContext, useState } from 'react';
 import {
   Animated,
   Image,
@@ -6,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native';
+import { ThemeContext } from '../theme-manager-component/theme-provider-component';
 
 interface BackgroundIcon {
   imagename: ImageSourcePropType;
@@ -26,6 +28,8 @@ const BackgroundIcon: React.FC<BackgroundIcon> = ({
 
   const animatedValue = new Animated.Value(20);
   const rotationValue = new Animated.Value(0);
+  const {secondaryColor} = useContext(ThemeContext);
+
 
   const handleMouseEnterInternal = () => {
     setIsHovered(true);
@@ -75,6 +79,7 @@ const BackgroundIcon: React.FC<BackgroundIcon> = ({
       opacity: isHovered ? 1 : 0.2,
       marginLeft: 20,
       transform: [{rotate: rotation + 'deg'}],
+      tintColor:secondaryColor
     },
   });
 
