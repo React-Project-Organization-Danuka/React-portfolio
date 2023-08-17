@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
 import cofee from '../../assets/icons/cup-hot.svg';
 import rocket from '../../assets/icons/rocket.svg';
@@ -17,7 +19,9 @@ import project_2 from '../../assets/images/project_2.png';
 import project_3 from '../../assets/images/project_3.png';
 import DynamicBackground from '../dynamic-background-component/dynamic-background-component';
 import {ThemeContext} from '../theme-manager-component/theme-provider-component';
-import descriptions from '../../assets/descriptions.json'
+import descriptions from '../../assets/descriptions.json';
+import LinkButton from '../link-button-component/link-button-component';
+import github_icon from '../../assets/icons/github.svg';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH_INACTIVE = 300;
@@ -34,21 +38,24 @@ const componentData = [
     props: {
       img: project_1,
       text: 'API for GetSafe School/Office Transport Management System',
-      description:descriptions[0]['my-work']['get_safe'],
+      description: descriptions[0]['my-work']['get_safe'],
+      link: descriptions[0]['my-work-links']['get_safe'],
     },
   },
   {
     props: {
       img: project_2,
       text: 'Web Application for Displaying Analytics of a Smart Plug',
-      description:descriptions[0]['my-work']['smart_plug'],
+      description: descriptions[0]['my-work']['smart_plug'],
+      link: descriptions[0]['my-work-links']['smart_plug'],
     },
   },
   {
     props: {
       img: project_3,
       text: 'GPA calculator and predictor web application',
-      description:descriptions[0]['my-work']['gpa_predictor'],
+      description: descriptions[0]['my-work']['gpa_predictor'],
+      link: descriptions[0]['my-work-links']['gpa_predictor'],
     },
   },
 ];
@@ -79,7 +86,6 @@ const MyWorkPage: React.FC = () => {
       color: secondaryColor,
       marginTop: 20,
     },
-    
   });
 
   const [myArray, setMyArray] = useState(componentData);
@@ -355,8 +361,8 @@ const MyWorkPage: React.FC = () => {
                         style={{
                           flex: 1,
                           backgroundColor: secondaryColor,
-                          borderRadius: 14,
-                          paddingBottom: 40,
+                          borderRadius: 12,
+                          paddingBottom: 20,
                           shadowColor: '#000',
                           width: value,
                           height: ITEM_HEIGHT,
@@ -364,9 +370,39 @@ const MyWorkPage: React.FC = () => {
                           position: 'absolute',
                         }}>
                         {value > 100 && (
-                          <Text style={{color: primaryColor, padding: 40}}>
-                            {props.description}
-                          </Text>
+                          <View>
+                            <Text style={{color: primaryColor, padding: 40}}>
+                              {props.description}
+                            </Text>
+                            <View style={{height: 30, alignItems: 'center'}}>
+                              <TouchableOpacity
+                                onPressIn={() => {
+                                  Linking.canOpenURL(props.link)
+                                    .then(supported => {
+                                      if (supported) {
+                                        return Linking.openURL(props.link);
+                                      } else {
+                                        console.log('Cannot open URL:', props.link);
+                                      }
+                                    })
+                                    .catch(error =>
+                                      console.error(
+                                        'Error opening URL:',
+                                        error,
+                                      ),
+                                    );
+                                  return null;
+                                }}>
+                                <Image
+                                  style={{
+                                    height: 30,
+                                    width: 30,
+                                    tintColor: primaryColor,
+                                  }}
+                                  source={github_icon}></Image>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
                         )}
                       </View>
                     )}

@@ -82,6 +82,7 @@ const ContactPagePhone: React.FC = () => {
     },
     bottomContainerText: {
       color: primaryColor,
+      textAlign:'center'
     },
     bottomContainerIcon: {
       tintColor: primaryColor,
@@ -112,14 +113,11 @@ const ContactPagePhone: React.FC = () => {
                     source={email}
                     style={styles.bottomContainerIcon}></Image>
                   <Text style={styles.bottomContainerText}>
-                    thaveesha222@gmail.com
-                  </Text>
-                  <Text style={styles.bottomContainerText}>
                     danukawaidyatillake@gmail.com
                   </Text>
                 </View>
               </View>
-              <View style={{alignItems:'center',width:'100%'}}>
+              <View style={{alignItems:'center',width:'100%',marginBottom:10}}>
                 <View style={styles.bottomContainerComponent}>
                   <Image
                     source={location}

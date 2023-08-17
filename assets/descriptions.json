@@ -1,9 +1,14 @@
 [
   {
     "my-work": {
-      "smart_plug": " As the backend developer in a team of 4, I held sole responsibility for creating the API that facilitated communication between an Admin dashboard, a client mobile application, and an IoT attendance marking device. I used Laravel to build the API from ground up and MySql database as the primary database of the application. The project involved Laravel Sanctum for authentication and the firebase SDK for sending Push notifications to the mobile device. Throughout the development process, I maintained a strong focus on best practices, code quality, and efficient implementation. By leveraging Laravel, MySQL, Sanctum, Firebase SDK and other Laravel features, I ensured a robust and reliable backend solution for the project.",
+      "smart_plug": " As the backend developer in a team of 4, I held sole responsibility for creating the API that facilitated communication between an Admin dashboard, a client mobile application, and an IoT attendance marking device. I used Laravel to build the API from ground up and MySql database as the primary database of the application. The project involved Laravel Sanctum for authentication and the firebase SDK for sending Push notifications to the mobile device. Throughout the development process, I maintained a strong focus on best practices, code quality, and efficient implementation.",
       "gpa_predictor": "The project was a ground up Laravel solution that involved two projects. One allowed students to calculate there GPA and then get a prediction of there GPA by using data from past students who have persued the same courses. The other was a simple Laravel application developed using Laravel Breeze that was utilized to collect data from past students. In addition the application provided the students with a probability on getting selected to each major. The project involved implementing the php-ai package to provide machine learning based predictions",
       "get_safe": "The project was a ground up Laravel solution that involved two projects. One allowed students to calculate there GPA and then get a prediction of there GPA by using data from past students who have persued the same courses. The other was a simple Laravel application developed using Laravel Breeze that was utilized to collect data from past students. In addition the application provided the students with a probability on getting selected to each major. The project involved implementing the php-ai package to provide machine learning based predictions"
+    },
+    "my-work-links": {
+      "smart_plug": "https://github.com/Thaveesha222/Smart-Plug-Web-App",
+      "gpa_predictor": "https://github.com/Thaveesha222/Stripe_Integration_demo",
+      "get_safe": "https://github.com/Thaveesha222/Viva_backend"
     }
   }
 ]
