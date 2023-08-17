@@ -1,4 +1,4 @@
-//@ts-nocheck
+// @ts-nocheck
 import React, {useContext, useState} from 'react';
 import {
   Animated,
@@ -8,8 +8,7 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Linking,
+  TouchableOpacity
 } from 'react-native';
 import cofee from '../../assets/icons/cup-hot.svg';
 import rocket from '../../assets/icons/rocket.svg';
@@ -20,7 +19,6 @@ import project_3 from '../../assets/images/project_3.png';
 import DynamicBackground from '../dynamic-background-component/dynamic-background-component';
 import {ThemeContext} from '../theme-manager-component/theme-provider-component';
 import descriptions from '../../assets/descriptions.json';
-import LinkButton from '../link-button-component/link-button-component';
 import github_icon from '../../assets/icons/github.svg';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
@@ -28,10 +26,6 @@ export const ITEM_WIDTH_INACTIVE = 300;
 export const ITEM_WIDTH = 350;
 export const ITEM_HEIGHT_INACTIVE = 300;
 export const ITEM_HEIGHT = 400;
-export const IMAGE_HEIGHT_ACTIVE = 300;
-export const IMAGE_HEIGHT_INACTIVE = 250;
-export const IMAGE_WIDTH_ACTIVE = 200;
-export const IMAGE_WIDTH_INACTIVE = 150;
 
 const componentData = [
   {
@@ -60,7 +54,7 @@ const componentData = [
   },
 ];
 
-const MyWorkPage: React.FC = () => {
+const MyWorkPagePhone: React.FC = () => {
   const {primaryColor, secondaryColor} = useContext(ThemeContext);
 
   const styles = StyleSheet.create({
@@ -70,9 +64,10 @@ const MyWorkPage: React.FC = () => {
       justifyContent: 'center',
       backgroundColor: primaryColor,
       alignItems: 'center',
-      width: '80%',
+      width: '100%',
     },
     header: {
+      color: '#222',
       fontSize: 20,
       fontWeight: 'bold',
       paddingLeft: 20,
@@ -81,6 +76,7 @@ const MyWorkPage: React.FC = () => {
       color: secondaryColor,
     },
     body: {
+      color: '#222',
       fontSize: 18,
       textAlign: 'center',
       color: secondaryColor,
@@ -89,186 +85,79 @@ const MyWorkPage: React.FC = () => {
   });
 
   const [myArray, setMyArray] = useState(componentData);
-
-  const [animatedLeftMargin, setanimatedLeftMargin] = useState(0);
-
-  const [opacityIndex1Value, setopacityIndex1Value] = useState(0.5);
-  const [opacityIndex2Value, setopacityIndex2Value] = useState(1);
-  const [opacityIndex3Value, setopacityIndex3Value] = useState(0.5);
-
-  const [hightInActiveValue, sethightInActiveValue] =
-    useState(ITEM_HEIGHT_INACTIVE);
-  const [widthInActiveValue, setwidthInActiveValue] =
-    useState(ITEM_WIDTH_INACTIVE);
-
-  const [hightActiveValue, sethightActiveValue] = useState(ITEM_HEIGHT);
-  const [widthActiveValue, setwidthActiveValue] = useState(ITEM_WIDTH);
-
-  const [imageHightInActiveValue, setImageHightInActiveValue] = useState(
-    IMAGE_HEIGHT_INACTIVE,
-  );
-  const [imageWidthInActiveValue, setImageWidthInActiveValue] =
-    useState(IMAGE_WIDTH_INACTIVE);
-
-  const [imageHightActiveValue, setImageHightActiveValue] =
-    useState(IMAGE_HEIGHT_ACTIVE);
-  const [imageWidthActiveValue, setImageWidthActiveValue] =
-    useState(IMAGE_WIDTH_ACTIVE);
-
   const mainAnimation = new Animated.Value(0);
+  const mainAnimationBackward = new Animated.Value(0);
+  const [leftValue, setLeftValue] = useState(0);
+  const [opacityValue, setOpacityValue] = useState(0);
 
   const moveForward = () => {
+    setMyArray(prevArray => {
+      // Create a new array with the elements moved forward by one position
+      const newArray = [...prevArray];
+      const lastItem = newArray.pop();
+      if (lastItem) {
+        newArray.unshift(lastItem);
+      }
+      return newArray;
+    });
     Animated.timing(mainAnimation, {
       toValue: 1,
       duration: 300,
       useNativeDriver: true,
-    }).start(() => {
-      setMyArray(prevArray => {
-        // Create a new array with the elements moved forward by one position
-        const newArray = [...prevArray];
-        const lastItem = newArray.pop();
-        if (lastItem) {
-          newArray.unshift(lastItem);
-        }
-        setanimatedLeftMargin(0);
-        setopacityIndex1Value(0.5);
-        setopacityIndex2Value(1);
-        setopacityIndex3Value(0.5);
-
-        sethightActiveValue(ITEM_HEIGHT);
-        sethightInActiveValue(ITEM_HEIGHT_INACTIVE);
-        setwidthActiveValue(ITEM_WIDTH);
-        setwidthInActiveValue(ITEM_WIDTH_INACTIVE);
-
-        setImageHightActiveValue(IMAGE_HEIGHT_ACTIVE);
-        setImageHightInActiveValue(IMAGE_HEIGHT_INACTIVE);
-        setImageWidthActiveValue(IMAGE_WIDTH_ACTIVE);
-        setImageWidthInActiveValue(IMAGE_WIDTH_INACTIVE);
-
-        return newArray;
-      });
-    });
+    }).start();
   };
 
-  function linearInterpolation(
-    x: number,
-    x0: number,
-    x1: number,
-    y0: number,
-    y1: number,
-  ): number {
-    const y = y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
-    return y;
-  }
+  const moveBackward = () => {
+    setMyArray(prevArray => {
+      const [first, second, ...rest] = prevArray; // Destructure the first two elements
+      return [second, first, ...rest]; // Swap and reassemble the array
+    });
+    Animated.timing(mainAnimationBackward, {
+      toValue: -1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
 
   mainAnimation.addListener(animation => {
-    //Moving component to left
-    setanimatedLeftMargin(linearInterpolation(animation.value, 0, 1, 0, 340));
+    setLeftValue(animation.value * 300);
+    setOpacityValue(1 - animation.value);
+  });
 
-    //Changing opacity of components
-    setopacityIndex1Value(linearInterpolation(animation.value, 0, 1, 0.5, 1));
-    setopacityIndex2Value(linearInterpolation(animation.value, 0, 1, 1, 0.5));
-    setopacityIndex3Value(linearInterpolation(animation.value, 0, 1, 0.25, 0));
-
-    //Changing width and height of components
-    sethightActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        ITEM_HEIGHT,
-        ITEM_HEIGHT_INACTIVE,
-      ),
-    );
-    sethightInActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        ITEM_HEIGHT_INACTIVE,
-        ITEM_HEIGHT,
-      ),
-    );
-
-    setwidthActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        ITEM_WIDTH,
-        ITEM_WIDTH_INACTIVE,
-      ),
-    );
-    setwidthInActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        ITEM_WIDTH_INACTIVE,
-        ITEM_WIDTH,
-      ),
-    );
-
-    setImageHightActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        IMAGE_HEIGHT_ACTIVE,
-        IMAGE_HEIGHT_INACTIVE,
-      ),
-    );
-    setImageWidthActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        IMAGE_WIDTH_ACTIVE,
-        IMAGE_WIDTH_INACTIVE,
-      ),
-    );
-
-    setImageHightInActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        IMAGE_HEIGHT_INACTIVE,
-        IMAGE_HEIGHT_ACTIVE,
-      ),
-    );
-    setImageWidthInActiveValue(
-      linearInterpolation(
-        animation.value,
-        0,
-        1,
-        IMAGE_WIDTH_INACTIVE,
-        IMAGE_WIDTH_ACTIVE,
-      ),
-    );
+  mainAnimationBackward.addListener(animation => {
+    setLeftValue(animation.value * 350);
+    setOpacityValue(1 - Math.abs(animation.value));
   });
 
   const animatedValue = new Animated.Value(0);
   const [value, setValue] = useState(0);
 
   const handleMouseEnterInternal = (index: number) => {
-    Animated.timing(animatedValue, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    if (value == 300) {
+      Animated.timing(animatedValue, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(animatedValue, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }
   };
 
   const handleMouseLeaveInternal = (index: number) => {
     Animated.timing(animatedValue, {
       toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
+      duration: 200,
+      useNativeDriver: false,
     }).start();
   };
 
   animatedValue.addListener(animation => {
-    setValue(animation.value * ITEM_WIDTH);
+    setValue(animation.value * 300);
   });
 
   return (
@@ -287,7 +176,6 @@ const MyWorkPage: React.FC = () => {
             style={{
               fontWeight: 'bold',
               fontSize: 20,
-              // lineHeight: 50,
               fontFamily: 'Noto Sans',
               textAlign: 'center',
               color: secondaryColor,
@@ -296,28 +184,31 @@ const MyWorkPage: React.FC = () => {
           </Text>
         </View>
         <View style={styles.mainContainer}>
-          <Pressable onPress={moveForward}>
+          <Pressable onPress={moveBackward}>
             <Image
               source={rightarrow}
               style={{
                 width: 20,
                 height: 20,
                 transform: [{rotate: '180deg'}],
-                marginRight: 20,
+                marginLeft: 20,
                 tintColor: secondaryColor,
               }}></Image>
           </Pressable>
-          {myArray.slice(0, 3).map((item, index) => {
+          {myArray.slice(0, 2).map((item, index) => {
             const props = item.props;
             return (
               <Pressable
-                style={{flex: 1, flexDirection: 'row'}}
-                {...(index == 1
-                  ? {
-                      onHoverIn: handleMouseEnterInternal,
-                      onHoverOut: handleMouseLeaveInternal,
-                    }
-                  : {})}>
+                onPress={handleMouseEnterInternal}
+                onBlur={handleMouseLeaveInternal}
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: index == 0 ? 'relative' : 'absolute',
+                  opacity: index == 0 ? 1 - opacityValue : opacityValue,
+                }}>
                 <Animated.View
                   style={{
                     backgroundColor: primaryColor,
@@ -330,48 +221,34 @@ const MyWorkPage: React.FC = () => {
                     },
                     shadowOpacity: 0.29,
                     shadowRadius: 4.65,
-                    marginLeft: index == 2 ? 50 : 0,
-                    marginRight: index == 0 ? 50 : 0,
-
-                    left: index == 1 || index == 0 ? animatedLeftMargin : 0,
-                    width:
-                      index == 1
-                        ? widthActiveValue
-                        : index == 0
-                        ? widthInActiveValue
-                        : ITEM_WIDTH_INACTIVE,
-                    height:
-                      index == 1
-                        ? hightActiveValue
-                        : index == 0
-                        ? hightInActiveValue
-                        : ITEM_WIDTH_INACTIVE,
-                    borderWidth: index == 1 ? 3 : 1,
-                    opacity:
-                      index == 0
-                        ? opacityIndex1Value
-                        : index == 1
-                        ? opacityIndex2Value
-                        : opacityIndex3Value,
+                    width: ITEM_WIDTH_INACTIVE,
+                    height: ITEM_HEIGHT_INACTIVE,
+                    borderWidth: 3,
                     borderColor: secondaryColor,
+                    left: index == 1 ? leftValue : 0,
                   }}>
                   <View key={index}>
-                    {index == 1 && (
+                    {index == 0 && (
                       <View
                         style={{
                           flex: 1,
                           backgroundColor: secondaryColor,
                           borderRadius: 12,
-                          paddingBottom: 20,
+                          paddingBottom: 40,
                           shadowColor: '#000',
                           width: value,
-                          height: ITEM_HEIGHT,
+                          height: ITEM_HEIGHT_INACTIVE,
                           zIndex: 1000000000,
                           position: 'absolute',
                         }}>
                         {value > 100 && (
                           <View>
-                            <Text style={{color: primaryColor, padding: 40}}>
+                            <Text
+                              style={{
+                                color: primaryColor,
+                                padding: 20,
+                                fontSize: 12,
+                              }}>
                               {props.description}
                             </Text>
                             <View style={{height: 30, alignItems: 'center'}}>
@@ -382,7 +259,10 @@ const MyWorkPage: React.FC = () => {
                                       if (supported) {
                                         return Linking.openURL(props.link);
                                       } else {
-                                        console.log('Cannot open URL:', props.link);
+                                        console.log(
+                                          'Cannot open URL:',
+                                          props.link,
+                                        );
                                       }
                                     })
                                     .catch(error =>
@@ -409,22 +289,14 @@ const MyWorkPage: React.FC = () => {
                     <Image
                       source={props.img}
                       style={{
-                        width:
-                          index == 1
-                            ? imageHightActiveValue
-                            : imageHightInActiveValue,
-                        height:
-                          index == 1
-                            ? imageWidthActiveValue
-                            : imageWidthInActiveValue,
+                        width: 200,
+                        height: 120,
                         alignSelf: 'center',
                         marginTop: 30,
                       }}
                     />
                     <Text style={styles.header}>{props.text}</Text>
-                    {index == 1 && (
-                      <Text style={styles.body}>(Hover for more info)</Text>
-                    )}
+                    <Text style={styles.body}>(Tap for more info)</Text>
                   </View>
                 </Animated.View>
               </Pressable>
@@ -446,4 +318,4 @@ const MyWorkPage: React.FC = () => {
   );
 };
 
-export default MyWorkPage;
+export default MyWorkPagePhone;
